@@ -14,11 +14,15 @@ services:
       - "CASSANDRA_CLUSTER_NAME=Test Cluster"
       - "CASSANDRA_DC=datacenter1"
       - "CASSANDRA_RACK=rack1"
-      - "CASSANDRA_PASSWORD=qwert"
+      - "CASSANDRA_AUTH_ENABLED=true"
+      - "CASSANDRA_USERNAME=cassandra"
+      - "CASSANDRA_PASSWORD=cassandra"
+
     restart: always
     volumes:
       - ./data/node1:/var/lib/cassandra
       - ./init-scripts:/docker-entrypoint-initdb.d
+      - ./config/cassandra-template.yaml:/etc/cassandra/cassandra.yaml
     healthcheck:
       test: ["CMD", "cqlsh", "-u cassandra", "-p cassandra" ,"-e describe keyspaces"]
       interval: 15s
@@ -38,7 +42,8 @@ services:
       - "CASSANDRA_CLUSTER_NAME=Test Cluster"
       - "CASSANDRA_DC=datacenter1"
       - "CASSANDRA_RACK=rack2"
-      - "CASSANDRA_PASSWORD=qwert"
+      - "CASSANDRA_AUTH_ENABLED=true"
+
     restart: always
     volumes:
       - ./data/node2:/var/lib/cassandra
@@ -61,7 +66,8 @@ services:
       - "CASSANDRA_CLUSTER_NAME=Test Cluster"
       - "CASSANDRA_DC=datacenter1"
       - "CASSANDRA_RACK=rack3"
-      - "CASSANDRA_PASSWORD=qwert"
+      - "CASSANDRA_AUTH_ENABLED=true"
+
     restart: always
     volumes:
       - ./data/node3:/var/lib/cassandra
@@ -85,3 +91,12 @@ services:
       - ./init-scripts/01-keyspace.cql:/docker-entrypoint-initdb.d/01-keyspace.cql
       - ./init-scripts/load-keyspace.sh:/docker-entrypoint-initdb.d/load-keyspace.sh
     command: /bin/bash -c "/docker-entrypoint-initdb.d/load-keyspace.sh"
+
+
+  cassandra-config:
+    image: alpine
+    depends_on:
+      - node1
+    volumes:
+      - ./config/cassandra-template.yaml:/config/cassandra-template.yaml
+    command: sh -c "cp /config/cassandra-template.yaml /etc/cassandra/cassandra.yaml"
