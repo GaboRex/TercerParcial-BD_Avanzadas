@@ -2,6 +2,12 @@
 
 ## **Descripción y requisitos del proyecto**.
 
+* Definición del entorno con Docker Compose
+* Configuración de múltiples instancias
+* Configuración del clúster o replicación
+* Configuración de la conectividad del cliente
+* Pruebas y verificación del clúster o la base de datos única
+* Documentación y presentación
 
 
 ## **Requisitos técnicos**.
